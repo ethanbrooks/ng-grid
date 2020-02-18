@@ -17,7 +17,7 @@
   ],
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ng serve --host=0.0.0.0",
     "build": "ng build",
     "lint": "ng lint ng-universal-demo",
     "build:client-and-server-bundles": "ng build --prod && ng run ng-universal-demo:server:production",
@@ -46,11 +46,19 @@
     "core-js": "2.4.1",
     "devextreme": "19.2",
     "devextreme-angular": "19.2",
+    "devextreme-aspnet-data-nojquery": "^2.5.1",
     "express": "^4.17.1",
     "jszip": "3.2.2",
+    "ng-terminal": "^2.3.2",
     "reflect-metadata": "^0.1.13",
     "rxjs": "6.5.4",
     "stream": "^0.0.2",
+    "xterm-addon-attach": "^0.5.0",
+    "xterm-addon-fit": "^0.3.0",
+    "xterm-addon-search": "^0.5.0",
+    "xterm-addon-serialize": "^0.1.2",
+    "xterm-addon-web-links": "^0.2.1",
+    "xterm-addon-webgl": "^0.5.0",
     "zone.js": "~0.10.2"
   },
   "devDependencies": {

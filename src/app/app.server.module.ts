@@ -1,8 +1,9 @@
+
 import {NgModule} from '@angular/core';
 import {ServerModule, ServerTransferStateModule} from '@angular/platform-server';
 import {ModuleMapLoaderModule} from '@nguniversal/module-map-ngfactory-loader';
-import { DxTreeListModule } from 'devextreme-angular';
-
+import { DxDataGridModule, DxFormModule, DxSelectBoxModule, DxTabPanelModule } from 'devextreme-angular';
+import { NgTerminalModule } from 'ng-terminal';
 import {AppModule} from './app.module';
 import {GridComponent} from './grid.component';
 
@@ -14,7 +15,8 @@ import {GridComponent} from './grid.component';
     ServerModule,
     ModuleMapLoaderModule,
     ServerTransferStateModule,
-    DxTreeListModule
+    DxDataGridModule, DxFormModule, DxSelectBoxModule, DxTabPanelModule,
+    NgTerminalModule
   ],
   // Since the bootstrapped component is not inherited from your
   // imported AppModule, it needs to be repeated here.

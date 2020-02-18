@@ -1,52 +1,321 @@
-<div id="tree-list-demo">
-    <dx-tree-list
-        id="employees"
-        [dataSource]="employees"
-        keyExpr="ID"
-        parentIdExpr="Head_ID"
-        [showRowLines]="true"
-        [showBorders]="true"
-        [columnAutoWidth]="true"
-        [expandedRowKeys]="[1]"
-        (onEditorPreparing)="editorPreparing($event)"
-        (onInitNewRow)="initNewRow($event)"
-        (onCellPrepared)="cellPrepared($event)">
-        <dxo-editing
-            mode="popup"
-            [allowUpdating]="true"
-            [allowDeleting]="true"
-            [allowAdding]="true">
-            <dxo-popup
-                title="Employee Info"
-                [showTitle]="true"
-                [width]="700"
-                >
-            </dxo-popup>
-            <!--//             [position] = "{ my: 'top', at: 'top', of: window }" //-->
-        </dxo-editing>
 
-        <dxi-column dataField="Full_Name">
-            <dxi-validation-rule type="required"></dxi-validation-rule>
-        </dxi-column>
-        <dxi-column dataField="Prefix" caption="Title">
-            <dxi-validation-rule type="required"></dxi-validation-rule>
-        </dxi-column>
-        <dxi-column dataField="Head_ID" caption="Head" [visible]="false">
-            <dxo-lookup
-                [dataSource]="lookupData"
-                valueExpr="ID"
-                displayExpr="Full_Name">
-            </dxo-lookup>
-            <dxi-validation-rule type="required"></dxi-validation-rule>
-        </dxi-column>
-        <dxi-column dataField="Title" caption="Position">
-            <dxi-validation-rule type="required"></dxi-validation-rule>
-        </dxi-column>
-        <dxi-column dataField="City" [width]="150">
-            <dxi-validation-rule type="required"></dxi-validation-rule>
-        </dxi-column>
-        <dxi-column dataField="Hire_Date" dataType="date" [width]="120">
-            <dxi-validation-rule type="required"></dxi-validation-rule>
-        </dxi-column>
-    </dx-tree-list>
-</div>
+<dx-data-grid
+    id="container"
+    [dataSource]="containers"  
+    [remoteOperations]="true"
+    [showBorders]="true"
+    (onRowExpanded)="onRowExpanded($event)">
+
+    <dxo-paging pageSize="15"></dxo-paging>
+
+    <dxi-column dataField="Id"></dxi-column>
+    <dxi-column dataField="Names"></dxi-column>
+    <dxo-master-detail [enabled]="true" template="masterDetail" ></dxo-master-detail>
+    <div *dxTemplate="let masterDetailItem of 'masterDetail'">
+        <dx-tab-panel>  
+            <dxi-item title="Overview" template="overviewTab"></dxi-item>
+            <div *dxTemplate="let overviewTabItem of 'overviewTab'">
+
+                <!--// https://js.devexpress.com/Demos/WidgetsGallery/Demo/ResponsiveBox/Overview/Angular/Light/ //-->
+                <dx-box direction="row" width="100%" [height]="300" id="template-demo"  width="100%">
+                    <dxi-item class="rect demo-dark" [ratio]="1" crossAlign='start' [baseSize]="50">
+                    <div class="multiview-item" id="">
+                        <h1>{{company.CompanyName}}</h1>
+                        <div>
+                            <p>
+                                <b>{{company.City}}</b>
+                                (<span>{{company.State}}</span>)
+                            </p>
+                            <p>
+                                <span>{{company.Zipcode}}</span>
+                                <span>{{company.Address}}</span>
+                            </p>
+                        </div>
+                        <div>
+                            <p>
+                                Phone: <b>{{company.Phone}}</b>
+                            </p>
+                            <p>
+                                Fax: <b>{{company.Fax}}</b>
+                            </p>
+                            <p>
+                                Website:
+                                <a href="{{company.Website}}" target="_blank">
+                                    {{company.Website}}
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+                </dxi-item>
+                <dxi-item class="rect demo-dark" [ratio]="2" crossAlign='center' [baseSize]="50">
+                    <div id="gauge-demo">
+                        <div id="gauge-container">
+                            <div class="left-section">
+                                <dx-circular-gauge
+                                    [value]="speedValue / 2"
+                                    >
+                                    <dxo-size [width]="90" [height]="90"></dxo-size>
+                                    <dxo-value-indicator
+                                        color="#f05b41"
+                                    >
+                                    </dxo-value-indicator>
+                                    <dxo-geometry
+                                        [startAngle]="180"
+                                        [endAngle]="90">
+                                    </dxo-geometry>
+                                    <dxo-scale
+                                        [startValue]="0"
+                                        [endValue]="100"
+                                        [tickInterval]="50">
+                                    </dxo-scale>
+                                </dx-circular-gauge>
+                                <dx-circular-gauge
+                                    [value]="speedValue / 2"
+                                    >
+                                    <dxo-size [width]="90" [height]="90"></dxo-size>
+                                    <dxo-value-indicator color="#f05b41"></dxo-value-indicator>
+                                    <dxo-geometry
+                                        [startAngle]="-90"
+                                        [endAngle]="-180">
+                                    </dxo-geometry>
+                                    <dxo-scale
+                                        [startValue]="100"
+                                        [endValue]="0"
+                                        [tickInterval]="50">
+                                    </dxo-scale>
+                                </dx-circular-gauge>
+                            </div>
+                            <div class="center-section">
+                                <dx-circular-gauge
+                                    id="speed-gauge"
+                                    [value]="speedValue"
+                                    >
+                                    <dxo-size [width]="260"></dxo-size>
+                                    <dxo-value-indicator
+                                        type="twoColorNeedle"
+                                        color="none"
+                                        [secondFraction]="0.24"
+                                        secondColor="#f05b41"
+                                    >
+                                    </dxo-value-indicator>
+                                    <dxo-geometry
+                                        [startAngle]="225"
+                                        [endAngle]="315">
+                                    </dxo-geometry>
+                                    <dxo-scale
+                                        [startValue]="20"
+                                        [endValue]="200"
+                                        [tickInterval]="20"
+                                        [minorTickInterval]="10">
+                                    </dxo-scale>
+                                </dx-circular-gauge>
+                                <div class="speed-value">
+                                    <span>{{speedValue}}</span>
+                                </div>
+                                <dx-linear-gauge
+                                    id="fuel-gauge"
+                                    [value]="50 - speedValue * 0.24"
+                                >
+                                    <dxo-size [width]="90" [height]="20"></dxo-size>
+                                    <dxo-scale
+                                        [startValue]="0"
+                                        [endValue]="50"
+                                        [tickInterval]="25"
+                                        [minorTickInterval]="12.5"
+                                    >
+                                        <dxo-minor-tick [visible]="true"></dxo-minor-tick>
+                                        <dxo-label [visible]="false"></dxo-label>
+                                    </dxo-scale>
+                                    <dxo-value-indicator
+                                        color="#f05b41"
+                                        [size]="8"
+                                        [offset]="7"
+                                    >
+                                    </dxo-value-indicator>
+                                </dx-linear-gauge>
+                            </div>
+                            <div class="right-section">
+                                <dx-circular-gauge
+                                    [value]="speedValue / 2"
+                                    >
+                                    <dxo-size [width]="90" [height]="90"></dxo-size>
+                                    <dxo-value-indicator
+                                        color="#f05b41"
+                                    >
+                                    </dxo-value-indicator>
+                                    <dxo-geometry
+                                        [startAngle]="90"
+                                        [endAngle]="0">
+                                    </dxo-geometry>
+                                    <dxo-scale
+                                        [startValue]="100"
+                                        [endValue]="0"
+                                        [tickInterval]="50">
+                                    </dxo-scale>
+                                </dx-circular-gauge>
+                                <dx-circular-gauge
+                                    [value]="speedValue / 2"
+                                    >
+                                    <dxo-size [width]="90" [height]="90"></dxo-size>
+                                    <dxo-value-indicator color="#f05b41"></dxo-value-indicator>
+                                    <dxo-geometry
+                                        [startAngle]="0"
+                                        [endAngle]="-90">
+                                    </dxo-geometry>
+                                    <dxo-scale
+                                        [startValue]="0"
+                                        [endValue]="100"
+                                        [tickInterval]="50">
+                                    </dxo-scale>
+                                </dx-circular-gauge>
+                            </div>
+                        </div>
+                    </div>
+                </dxi-item>
+
+                <dxi-item class="rect demo-dark" [ratio]="1" crossAlign='end' [baseSize]="50">
+                    <div id="chart-demo">
+                        <table class="demo-table">
+                    
+                            <tr *ngFor="let year of years">
+                                <td>
+                                    <dx-sparkline class="sparkline"
+                                        [dataSource]="oilCosts"
+                                        argumentField="month"
+                                        valueField="{{year}}"
+                                        type="line"
+                                        [showMinMax]="true">
+                                        <dxo-tooltip format="currency"></dxo-tooltip>
+                                    </dx-sparkline>
+                                </td>
+                             </tr>
+                        <tr *ngFor="let year of years">
+                                <td>
+                                    <dx-sparkline class="sparkline"
+                                        [dataSource]="goldCosts"
+                                        argumentField="month"
+                                        valueField="{{year}}"
+                                        type="spline"
+                                        [lineWidth]="3"
+                                        lineColor="#9ab57e"
+                                        minColor="#6babac"
+                                        maxColor="#ebdd8f"
+                                        [showMinMax]="true"
+                                        [showFirstLast]="false">
+                                        <dxo-tooltip format="currency"></dxo-tooltip>
+                                    </dx-sparkline>
+                                </td>
+                         </tr>
+                         <tr *ngFor="let year of years">
+                                <td>
+                                    <dx-sparkline class="sparkline"
+                                        [dataSource]="silverCosts"
+                                        argumentField="month"
+                                        valueField="{{year}}"
+                                        type="stepline"
+                                        lineColor="#e8c267"
+                                        firstLastColor="#e55253"
+                                        [pointSize]="6"
+                                        pointSymbol="square"
+                                        pointColor="#ebdd8f">
+                                        <dxo-tooltip format="currency"></dxo-tooltip>
+                                    </dx-sparkline>
+                                </td>
+                          </tr>
+                        </table>
+                    </div>
+                </dxi-item>
+            </dx-box>
+            </div>
+
+            <dxi-item title="Terminal" template="termTab"></dxi-item>
+            <div *dxTemplate="let termTabItem of 'termTab'">
+                <ng-terminal #term></ng-terminal>
+            </div>
+
+            <dxi-item title="Logs" template="logTab"></dxi-item>
+            <div *dxTemplate="let logTabItem of 'logTab'">
+                <ng-terminal #term></ng-terminal>
+            </div>
+
+            <dxi-item title="Volumes" template="volumeTab"></dxi-item>
+            <div *dxTemplate="let volumeTabItem of 'volumeTab'">
+                <dx-data-grid
+                    id="volumes"
+                    [dataSource]="volumes"
+                    [columns]="['Name', 'Scope', 'CreatedAt']"
+                    [showBorders]="true">
+                </dx-data-grid>
+            </div>
+
+            <dxi-item title="Networks" template="networkTab"></dxi-item>
+            <div *dxTemplate="let networkTabItem of 'networkTab'">
+                <dx-data-grid
+                    id="networks"
+                    [dataSource]="networks"
+                    [columns]="['Id', 'Name', 'Created']"
+                    [showBorders]="true">
+                </dx-data-grid>
+            </div>
+
+            <dxi-item title="Configs" template="configTab"></dxi-item>
+            <div *dxTemplate="let configTabItem of 'configTab'">
+                <dx-data-grid
+                    id="configs"
+                    [dataSource]="configs"
+                    [columns]="['ID', 'Spec.Name', 'UpdatedAt']"
+                    [showBorders]="true">
+                </dx-data-grid>
+            </div>
+
+            <dxi-item title="Secrets" template="secretsTab"></dxi-item>
+            <div *dxTemplate="let secretsTabItem of 'secretsTab'">
+                <dx-data-grid
+                    id="secrets"
+                    [dataSource]="secrets"
+                    [columns]="['ID', 'Spec.Name', 'UpdatedAt']"
+                    [showBorders]="true">
+                </dx-data-grid>
+            </div>
+
+            <dxi-item title="Top" template="topTab"></dxi-item>
+            <div *dxTemplate="let secretsTabItem of 'topTab'">
+                <dx-data-grid
+                    id="top"
+                    [dataSource]="tops"
+                    [columns]="['PID','USER','TIME','COMMAND']"
+                    [showBorders]="true">
+                </dx-data-grid>
+            </div>
+
+            <dxi-item title="Files" template="filesTab"></dxi-item>
+            <div *dxTemplate="let filesTabItem of 'filesTab'">
+                <dx-file-manager id="fileManager"
+                [fileProvider]="remoteProvider"
+                currentPath="Widescreen"
+                (onSelectedFileOpened)="displayImagePopup($event)">
+                    <dxo-permissions 
+                        create="true"
+                        copy="true"
+                        move="true"
+                        remove="true"
+                        rename="true"
+                        upload="true"
+                        download="true">
+                    </dxo-permissions>
+                </dx-file-manager>
+            </div>
+
+        </dx-tab-panel>
+    </div>
+</dx-data-grid>
+
+<label>Find next <input id="find-next"/></label>
+<label>Find previous <input id="find-previous"/></label>
+<label>Use regex<input type="checkbox" id="regex"/></label>
+<label>Case sensitive<input type="checkbox" id="case-sensitive"/></label>
+<label>Whole word<input type="checkbox" id="whole-word"/></label>
+<button id="serialize">Serialize the content of terminal</button>
+<label><input type="checkbox" id="write-to-terminal">Write back to terminal</label>
+<label for="padding">Padding <input type="number" id="padding" /></label>
+<button id="dispose" title="This is used to testing memory leaks">Dispose terminal</button>
