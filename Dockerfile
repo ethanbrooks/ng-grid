@@ -7,10 +7,7 @@ FROM node:10-slim
 ARG NODE_ENV=production
 ENV NODE_ENV $NODE_ENV
 
-# default to port 3000 for node, and 9229 and 9230 (tests) for debug
-ARG PORT=3000
-ENV PORT $PORT
-EXPOSE $PORT 9229 9230
+
 
 RUN apt-get update && apt-get install -qqy --no-install-recommends \
     ca-certificates \
@@ -46,6 +43,11 @@ COPY package.json package-lock.json* ./
 RUN npm install --no-optional && npm cache clean --force
 ENV PATH /opt/node_app/node_modules/.bin:$PATH
 
+
+# default to port 3000 for node, and 9229 and 9230 (tests) for debug
+ARG PORT=3000
+ENV PORT $PORT
+EXPOSE $PORT 4200 9229 9230
 # check every 30s to ensure this service returns HTTP 200
 HEALTHCHECK --interval=30s CMD node healthcheck.js
 

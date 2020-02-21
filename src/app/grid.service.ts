@@ -290,7 +290,7 @@ getTopsDataSource(container: Container, httpClient: HttpClient) {
                         params = params.set(i, JSON.stringify(loadOptions[i]));
                     }
                 });
-                return httpClient.get('http://localhost/api/containers', { params: params })
+                return httpClient.get('/api/containers', { params: params })
                     .toPromise()
                     .then((data: any) => {
                         console.log(data);
@@ -316,7 +316,7 @@ getTopsDataSource(container: Container, httpClient: HttpClient) {
                         params = params.set(i, JSON.stringify(loadOptions[i]));
                     }
                 });
-                return httpClient.get('http://localhost/api/volumes', { params: params })
+                return httpClient.get('/api/volumes', { params: params })
                     .toPromise()
                     .then((data: any) => {
                         console.log(data.Volumes);
@@ -342,7 +342,7 @@ getTopsDataSource(container: Container, httpClient: HttpClient) {
                         params = params.set(i, JSON.stringify(loadOptions[i]));
                     }
                 });
-                return httpClient.get('http://localhost/api/networks', { params: params })
+                return httpClient.get('/api/networks', { params: params })
                     .toPromise()
                     .then((data: any) => {
                         console.log(data);
@@ -368,7 +368,7 @@ getTopsDataSource(container: Container, httpClient: HttpClient) {
                         params = params.set(i, JSON.stringify(loadOptions[i]));
                     }
                 });
-                return httpClient.get('http://localhost/api/configs', { params: params })
+                return httpClient.get('/api/configs', { params: params })
                     .toPromise()
                     .then((data: any) => {
                         console.log(data);
@@ -394,7 +394,7 @@ getTopsDataSource(container: Container, httpClient: HttpClient) {
                         params = params.set(i, JSON.stringify(loadOptions[i]));
                     }
                 });
-                return httpClient.get('http://localhost/api/secrets', { params: params })
+                return httpClient.get('/api/secrets', { params: params })
                     .toPromise()
                     .then((data: any) => {
                         console.log(data);
@@ -420,7 +420,7 @@ getTopsDataSource(container: Container, httpClient: HttpClient) {
                         params = params.set(i, JSON.stringify(loadOptions[i]));
                     }
                 });
-                return httpClient.get('http://localhost/api/containers/top/a7d2a1f5105f', { params: params })
+                return httpClient.get('/api/containers/top/a7d2a1f5105f', { params: params })
                     .toPromise()
                     .then((data: any) => {
                         const response: Array<String> = [];

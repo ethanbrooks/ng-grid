@@ -1,6 +1,39 @@
 version: '3.7'
 services:
-
+  traefik:
+    image: traefik:latest
+    entrypoint: /usr/local/bin/traefik
+    command:
+        - --entrypoints.http.address=:80
+        - --entrypoints.https.address=:443
+        - --entrypoints.nodered-debug.address=:9229
+#          - --entrypoints.mongodb.address=:27017
+#            - --entrypoints.mysql.address=:3306
+        - --providers.docker.exposedbydefault=false
+        - --providers.docker.network=docker-Traefik_private
+        - --api
+        - --log.level=DEBUG
+        - --log.filePath=/var/log/traefik.log
+    labels:
+        # Dashboard
+        traefik.enable: "true"
+        traefik.http.routers.traefik.rule: Host(`traefik.docker.localhost`)
+        traefik.http.routers.traefik.service: api@internal
+        traefik.http.routers.traefik.entrypoints: http        
+    ports:
+        - 80:80
+        - 443:443
+        - 27017:27017
+#            - 3306:3306
+    volumes:
+#            - ./traefik/supervisord.conf:/etc/supervisord.conf:ro
+        - /var/run/docker.sock:/var/run/docker.sock
+        - ./traefik/beats/filebeat/conf/:/etc/filebeat/:ro
+        - ./traefik/beats/filebeat/log/:/var/log/filebeat:rw
+        - ./traefik/beats/filebeat/data/:/var/lib/filebeat/:rw
+    networks:
+        - private
+        - public
   node:
     build:
       context: .
@@ -14,67 +47,37 @@ services:
 #    command: ../node_modules/.bin/nodemon --inspect=0.0.0.0:9229 ./bin/www
     command: npm start
     ports:
-      - "3000:3000"
-      - "4200:4200"
       - "9229:9229"
       - "9230:9230"
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.node.rule: Host(`node.docker.localhost`)
+      traefik.http.routers.node.entrypoints: http
+      traefik.http.routers.node.service: node
+      traefik.http.services.node.loadbalancer.server.port: 4200
+
+      traefik.tcp.routers.nodered-debug.rule: Host(`nodered-debug.docker.localhost`) 
+      traefik.tcp.routers.nodered-debug.entrypoints: http
+      traefik.tcp.routers.nodered-debug.service: nodered-debug
+      traefik.tcp.services.nodered-debug.loadbalancer.server.port: 9229
+
+      traefik.http.routers.nodered.rule: (PathPrefix(`/admin/`, `/api/`) &&  Host(`node.docker.localhost`))
+      traefik.http.routers.nodered.entrypoints: http
+      traefik.http.routers.nodered.service: nodered
+      traefik.http.services.nodered.loadbalancer.server.port: 3000
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:rw
       - .:/opt/node_app/app:delegated
-      # bind-mounting these two files in will let you add packages during development without rebuilding
-      # for example, to add bower to your app while developing, just install it inside the container
-      # and then nodemon will restart. Your changes will last until you "docker-compose down" and will
-      # be saved on host for next build
-      # NOTE: this won't work on Docker Toolbox (virtualbox) which doesn't bind-mount single files
-      # docker-compose exec node npm install --save bower
       - ./package.json:/opt/node_app/package.json
       - ./package-lock.json:/opt/node_app/package-lock.json
-      # this is a workaround to prevent host node_modules from accidently getting mounted in container
-      # in case you want to use node/npm both outside container for test/lint etc. and also inside container
-      # this will overwrite the default node_modules dir in container so it won't conflict with our
-      # /opt/node_app/node_modules location. Thanks to PR from @brnluiz
       - notused:/opt/node_app/app/node_modules
     environment:
       - NODE_ENV=development
     healthcheck:
       disable: true
-
-  traefik:
-#        container_name: Traefik-traefik
-#        build: ./traefik/
-#        image: 569484333419.dkr.ecr.us-east-1.amazonaws.com/traefik:2.0-alpine_1.16-file_7.4.2
-      image: traefik:latest
-      entrypoint: /usr/local/bin/traefik
-      command:
-          - --entrypoints.http.address=:80
-          - --entrypoints.https.address=:443
-#          - --entrypoints.mongodb.address=:27017
-#            - --entrypoints.mysql.address=:3306
-          - --providers.docker.exposedbydefault=false
-          - --providers.docker.network=docker-Traefik_private
-          - --api
-          - --log.level=DEBUG
-          - --log.filePath=/var/log/traefik.log
-      labels:
-          # Dashboard
-          traefik.enable: "true"
-          traefik.http.routers.traefik.rule: Host(`traefik.docker.localhost`)
-          traefik.http.routers.traefik.service: api@internal
-          traefik.http.routers.traefik.entrypoints: http              
-      ports:
-          - 80:80
-          - 443:443
-          - 27017:27017
-#            - 3306:3306
-      volumes:
-#            - ./traefik/supervisord.conf:/etc/supervisord.conf:ro
-          - /var/run/docker.sock:/var/run/docker.sock
-          - ./traefik/beats/filebeat/conf/:/etc/filebeat/:ro
-          - ./traefik/beats/filebeat/log/:/var/log/filebeat:rw
-          - ./traefik/beats/filebeat/data/:/var/lib/filebeat/:rw
-      networks:
-          - private
-          - public
+    user: root
+    networks:
+      - private
 volumes:
   notused:
 networks:
